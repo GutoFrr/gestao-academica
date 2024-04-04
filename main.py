@@ -6,22 +6,56 @@ teachers = []
 classes = []
 enrollments = []
 
+
+class MenuItem:
+    def __init__(self, id, name, active, list):
+        self.id = id
+        self.name = name
+        self.active = active
+        self.list = list
+
+    def add_item_to_list(self, new_item):
+        self.list.items.append(new_item)
+
+    def display_operation_list(self):
+        if len(self.list.items) == 0:
+            print(self.list.empty_message)
+        for item in self.list.items:
+            print(f"- {item}")
+
+
+class OperationItem:
+    def __init__(self, id, name, active):
+        self.id = id
+        self.name = name
+        self.active = active
+
+
+class OperationList:
+    def __init__(self, items, input_message, empty_message):
+        self.items = items
+        self.input_message = input_message
+        self.empty_message = empty_message
+
+
 menu = [
-    {"id": "1", "name": "Estudante", "active": True, "list": students},
-    {"id": "2", "name": "Disciplina", "active": False, "list": disciplines},
-    {"id": "3", "name": "Professor", "active": False, "list": teachers},
-    {"id": "4", "name": "Turma", "active": False, "list": classes},
-    {"id": "5", "name": "Matrícula", "active": False, "list": enrollments},
-    {"id": "6", "name": "Sair", "active": True},
+    MenuItem("1", "Estudante", True, OperationList(
+        students, "Informe o nome do estudante: ", "Não há estudantes cadastrados...")),
+    MenuItem("2", "Disciplina", False, disciplines),
+    MenuItem("3", "Professor", False, teachers),
+    MenuItem("4", "Turma", False, classes),
+    MenuItem("5", "Matrícula", False, enrollments),
+    MenuItem("6", "Sair", True, students),
 ]
 
 operations_menu = [
-    {"id": "1", "name": "Incluir", "active": True},
-    {"id": "2", "name": "Listar", "active": True},
-    {"id": "3", "name": "Excluir", "active": False},
-    {"id": "4", "name": "Alterar", "active": False},
-    {"id": "5", "name": "Voltar ao menu principal", "active": True},
+    OperationItem("1", "Incluir", True),
+    OperationItem("2", "Listar", True),
+    OperationItem("3", "Excluir", False),
+    OperationItem("4", "Alterar", False),
+    OperationItem("5", "Voltar ao menu principal", True),
 ]
+
 
 def main():
     while True:
@@ -40,28 +74,29 @@ def main():
             print("Opção inválida! Tente novamente.")
             print()
 
+
 def display_menu(menu_list, message):
     print(message)
     for item in menu_list:
-        print(f"{ item['id'] }. { item['name'] }")
+        print(f"{ item.id }. { item.name }")
 
 
 def get_selected_menu_item(input, list):
-    return next(filter(lambda item: item["id"] == input, list), None)
+    return next(filter(lambda item: item.id == input, list), None)
+
 
 def display_operations(selected_item):
     system("cls")
 
     while True:
-        if bool(selected_item["active"]) is False:
-            print(f'"{selected_item["name"]}" está em desenvolvimento!')
+        if bool(selected_item.active) is False:
+            print(f'"{selected_item.name}" está em desenvolvimento!')
             print()
             break
 
         display_menu(operations_menu,
-                        f"Menu de operações - {selected_item['name']}")
-        
-        
+                     f"Menu de operações - {selected_item.name}")
+
         operation_input = input("Selecione uma operação: ")
 
         if operation_input == "5":
@@ -73,22 +108,22 @@ def display_operations(selected_item):
             system("cls")
 
             while True:
-                if bool(selected_operation["active"] is False):
-                    print(f'"{selected_operation["name"]}" está em desenvolvimento!')
+                if bool(selected_operation.active is False):
+                    print(f'"{selected_operation.name}" está em desenvolvimento!')
                     print()
                     break
 
                 else:
                     while True:
-                        print(f"{selected_operation["name"]}")
+                        print(f"{selected_operation.name}")
 
-                        if (selected_operation["id"] == "1"):
-                            new_item = input("Informe o nome do estudante: ")
-                            add_item_to_list(selected_item["list"], new_item)
-        
-                        elif (selected_operation["id"] == "2"):
-                            display_operation_list(selected_item["list"])
-                            
+                        if (selected_operation.id == "1"):
+                            new_item = input(selected_item.list.input_message)
+                            selected_item.add_item_to_list(new_item)
+
+                        elif (selected_operation.id == "2"):
+                            selected_item.display_operation_list()
+
                         print()
                         break
 
@@ -101,13 +136,5 @@ def display_operations(selected_item):
             print("Opção inválida! Tente novamente.")
             print()
 
-def add_item_to_list(list, new_item):
-    list.append(new_item)
-
-def display_operation_list(list):
-    if len(list) == 0:
-        print("Não há estudantes cadastrados.")
-    for item in list:
-        print(f"- {item}")
 
 main()

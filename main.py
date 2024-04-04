@@ -41,11 +41,15 @@ class OperationList:
 menu = [
     MenuItem("1", "Estudante", True, OperationList(
         students, "Informe o nome do estudante: ", "Não há estudantes cadastrados...")),
-    MenuItem("2", "Disciplina", False, disciplines),
-    MenuItem("3", "Professor", False, teachers),
-    MenuItem("4", "Turma", False, classes),
-    MenuItem("5", "Matrícula", False, enrollments),
-    MenuItem("6", "Sair", True, students),
+    MenuItem("2", "Disciplina", False, OperationList(
+        disciplines, "Informe o nome da disciplina: ", "Não há disciplinas cadastradas...")),
+    MenuItem("3", "Professor", False, OperationList(
+        teachers, "Informe o nome do professor: ", "Não há professores cadastrados...")),
+    MenuItem("4", "Turma", False, OperationList(
+        classes, "Informe o nome da turma: ", "Não há turmas cadastradas...")),
+    MenuItem("5", "Matrícula", False, OperationList(
+        enrollments, "Informe o nome da matrícula: ", "Não há matrículas cadastradas...")),
+    MenuItem("6", "Sair", True, OperationList),
 ]
 
 operations_menu = [
@@ -58,6 +62,7 @@ operations_menu = [
 
 
 def main():
+    system("cls")
     while True:
         display_menu(menu, "Bem-vindo!")
         menu_input = input("Selecione a área que deseja acessar: ")
@@ -66,8 +71,7 @@ def main():
             break
 
         elif get_selected_menu_item(menu_input, menu):
-            selected_item = menu[int(menu_input) - 1]
-            display_operations(selected_item)
+            display_operations(menu_input)
 
         else:
             system("cls")
@@ -77,15 +81,18 @@ def main():
 
 def display_menu(menu_list, message):
     print(message)
+    print()
     for item in menu_list:
         print(f"{ item.id }. { item.name }")
+    print()
 
 
 def get_selected_menu_item(input, list):
     return next(filter(lambda item: item.id == input, list), None)
 
 
-def display_operations(selected_item):
+def display_operations(menu_input):
+    selected_item = menu[int(menu_input) - 1]
     system("cls")
 
     while True:
@@ -95,7 +102,7 @@ def display_operations(selected_item):
             break
 
         display_menu(operations_menu,
-                     f"Menu de operações - {selected_item.name}")
+                     f"***** Menu de operações - {selected_item.name} *****")
 
         operation_input = input("Selecione uma operação: ")
 
@@ -116,6 +123,7 @@ def display_operations(selected_item):
                 else:
                     while True:
                         print(f"{selected_operation.name}")
+                        print()
 
                         if (selected_operation.id == "1"):
                             new_item = input(selected_item.list.input_message)

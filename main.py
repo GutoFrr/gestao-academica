@@ -1,11 +1,17 @@
 from os import system
 
+students = []
+disciplines = []
+teachers = []
+classes = []
+enrollments = []
+
 menu = [
-    {"id": "1", "name": "Estudante", "active": True},
-    {"id": "2", "name": "Disciplina", "active": False},
-    {"id": "3", "name": "Professor", "active": False},
-    {"id": "4", "name": "Turma", "active": False},
-    {"id": "5", "name": "Matrícula", "active": False},
+    {"id": "1", "name": "Estudante", "active": True, "list": students},
+    {"id": "2", "name": "Disciplina", "active": False, "list": disciplines},
+    {"id": "3", "name": "Professor", "active": False, "list": teachers},
+    {"id": "4", "name": "Turma", "active": False, "list": classes},
+    {"id": "5", "name": "Matrícula", "active": False, "list": enrollments},
     {"id": "6", "name": "Sair", "active": True},
 ]
 
@@ -16,8 +22,6 @@ operations_menu = [
     {"id": "4", "name": "Alterar", "active": False},
     {"id": "5", "name": "Voltar ao menu principal", "active": True},
 ]
-
-students = ["Gustavo", "Ferreira"]
 
 def main():
     while True:
@@ -76,10 +80,15 @@ def display_operations(selected_item):
 
                 else:
                     while True:
-                    
                         print(f"{selected_operation["name"]}")
-                        print()
-                        display_list(students)
+
+                        if (selected_operation["id"] == "1"):
+                            new_item = input("Informe o nome do estudante: ")
+                            add_item_to_list(selected_item["list"], new_item)
+        
+                        elif (selected_operation["id"] == "2"):
+                            display_operation_list(selected_item["list"])
+                            
                         print()
                         break
 
@@ -92,7 +101,12 @@ def display_operations(selected_item):
             print("Opção inválida! Tente novamente.")
             print()
 
-def display_list(list):
+def add_item_to_list(list, new_item):
+    list.append(new_item)
+
+def display_operation_list(list):
+    if len(list) == 0:
+        print("Não há estudantes cadastrados.")
     for item in list:
         print(f"- {item}")
 

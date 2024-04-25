@@ -32,23 +32,26 @@ class OperationItem:
 
 
 class OperationList:
-    def __init__(self, items, input_message, empty_message):
+    def __init__(self, items, input, empty_message):
         self.items = items
-        self.input_message = input_message
+        self.input = input
         self.empty_message = empty_message
 
 
+student_input = ["Informe o nome do estudante: ",
+                 "Informe o CPF do estudante: "]
+
 menu = [
     MenuItem("1", "Estudante", True, OperationList(
-        students, "Informe o nome do estudante: ", "Não há estudantes cadastrados...")),
+        students, student_input, "Não há estudantes cadastrados...")),
     MenuItem("2", "Disciplina", False, OperationList(
-        disciplines, "Informe o nome da disciplina: ", "Não há disciplinas cadastradas...")),
+        disciplines, {"nome": "Informe o nome da disciplina: "}, "Não há disciplinas cadastradas...")),
     MenuItem("3", "Professor", False, OperationList(
-        teachers, "Informe o nome do professor: ", "Não há professores cadastrados...")),
+        teachers, {"nome": "Informe o nome do professor: "}, "Não há professores cadastrados...")),
     MenuItem("4", "Turma", False, OperationList(
-        classes, "Informe o nome da turma: ", "Não há turmas cadastradas...")),
+        classes, {"nome": "Informe o nome da turma: "}, "Não há turmas cadastradas...")),
     MenuItem("5", "Matrícula", False, OperationList(
-        enrollments, "Informe o nome da matrícula: ", "Não há matrículas cadastradas...")),
+        enrollments, {"nome": "Informe o nome da matrícula: "}, "Não há matrículas cadastradas...")),
     MenuItem("6", "Sair", True, OperationList),
 ]
 
@@ -126,8 +129,16 @@ def display_operations(menu_input):
                         print()
 
                         if (selected_operation.id == "1"):
-                            new_item = input(selected_item.list.input_message)
-                            selected_item.add_item_to_list(new_item)
+                            if selected_item.name == "Estudante":
+                                user_name = input(
+                                    selected_item.list.input[0])
+
+                                user_cpf = input(selected_item.list.input[1])
+
+                                new_user = {"codigo": len(
+                                    students) + 1, "nome": user_name, "cpf": user_cpf}
+
+                                selected_item.add_item_to_list(new_user)
 
                         elif (selected_operation.id == "2"):
                             selected_item.display_operation_list()

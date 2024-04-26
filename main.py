@@ -1,6 +1,6 @@
 from os import system
 
-students = []
+students = [{"codigo": 1, "nome": "Gustavo", "cpf": "123"}]
 disciplines = []
 teachers = []
 classes = []
@@ -32,34 +32,30 @@ class OperationItem:
 
 
 class OperationList:
-    def __init__(self, items, input, empty_message):
+    def __init__(self, items, empty_message):
         self.items = items
-        self.input = input
         self.empty_message = empty_message
 
 
-student_input = ["Informe o nome do estudante: ",
-                 "Informe o CPF do estudante: "]
-
 menu = [
     MenuItem("1", "Estudante", True, OperationList(
-        students, student_input, "Não há estudantes cadastrados...")),
+        students, "Não há estudantes cadastrados...")),
     MenuItem("2", "Disciplina", False, OperationList(
-        disciplines, {"nome": "Informe o nome da disciplina: "}, "Não há disciplinas cadastradas...")),
+        disciplines, "Não há disciplinas cadastradas...")),
     MenuItem("3", "Professor", False, OperationList(
-        teachers, {"nome": "Informe o nome do professor: "}, "Não há professores cadastrados...")),
+        teachers, "Não há professores cadastrados...")),
     MenuItem("4", "Turma", False, OperationList(
-        classes, {"nome": "Informe o nome da turma: "}, "Não há turmas cadastradas...")),
+        classes, "Não há turmas cadastradas...")),
     MenuItem("5", "Matrícula", False, OperationList(
-        enrollments, {"nome": "Informe o nome da matrícula: "}, "Não há matrículas cadastradas...")),
+        enrollments, "Não há matrículas cadastradas...")),
     MenuItem("6", "Sair", True, OperationList),
 ]
 
 operations_menu = [
     OperationItem("1", "Incluir", True),
     OperationItem("2", "Listar", True),
-    OperationItem("3", "Excluir", False),
-    OperationItem("4", "Alterar", False),
+    OperationItem("3", "Excluir", True),
+    OperationItem("4", "Alterar", True),
     OperationItem("5", "Voltar ao menu principal", True),
 ]
 
@@ -86,12 +82,16 @@ def display_menu(menu_list, message):
     print(message)
     print()
     for item in menu_list:
-        print(f"{ item.id }. { item.name }")
+        print(f"{item.id}. {item.name}")
     print()
 
 
 def get_selected_menu_item(input, list):
     return next(filter(lambda item: item.id == input, list), None)
+
+
+def get_list_item(input, list):
+    return next(filter(lambda item: item['codigo'] == input, list), None)
 
 
 def display_operations(menu_input):
@@ -128,20 +128,79 @@ def display_operations(menu_input):
                         print(f"{selected_operation.name}")
                         print()
 
-                        if (selected_operation.id == "1"):
+                        # Incluir
+                        if selected_operation.id == "1":
                             if selected_item.name == "Estudante":
-                                user_name = input(
-                                    selected_item.list.input[0])
+                                student_name = input(
+                                    "Informe o nome do estudante: ")
 
-                                user_cpf = input(selected_item.list.input[1])
+                                student_cpf = input(
+                                    "Informe o CPF do estudante: ")
 
-                                new_user = {"codigo": len(
-                                    students) + 1, "nome": user_name, "cpf": user_cpf}
+                                new_student = {"codigo": len(
+                                    students) + 1, "nome": student_name, "cpf": student_cpf}
 
-                                selected_item.add_item_to_list(new_user)
+                                selected_item.add_item_to_list(new_student)
 
-                        elif (selected_operation.id == "2"):
+                        # Listar
+                        elif selected_operation.id == "2":
                             selected_item.display_operation_list()
+
+                        # Excluir
+                        elif selected_operation.id == "3":
+                            if selected_item.name == "Estudante":
+                                student_code = input(
+                                    "Informe o código do estudante que deseja exculir: ")
+
+                                selected_student = get_list_item(
+                                    int(student_code), students)
+                                if selected_student != None:
+                                    students.remove(selected_student)
+                                    
+                                    print()
+                                    print(f"Estudante: {selected_student} removido com sucesso!")
+
+                                else:
+                                    print()
+                                    print("Estudante não encontrado...")
+
+                        # Alterar
+                        elif selected_operation.id == "4":
+                            if selected_item.name == "Estudante":
+                                student_code = input(
+                                    "Informe o código do estudante que deseja editar os dados: ")
+
+                                selected_student = get_list_item(
+                                    int(student_code), students)
+                                if selected_student != None:
+                                    print(f"Você selecionou o estudante: {
+                                          selected_student}")
+                                    print()
+
+                                    selected_student['nome'] = input(
+                                        "Informe outro nome para o estudante: ")
+                                    selected_student['cpf'] = input(
+                                        "Informe outro cpf para o estudante: ")
+                                    print()
+
+                                    print(
+                                        "Dados do estudante editados com sucesso!")
+                                    print(selected_student)
+
+                                else:
+                                    print()
+                                    print("Estudante não encontrado...")
+
+                                # user_name = input(
+                                #     "Informe o nome do estudante: ")
+
+                                # user_cpf = input(
+                                #     "Informe o CPF do estudante: ")
+
+                                # new_student = {"codigo": student_code,
+                                #                "nome": user_name, "cpf": user_cpf}
+
+                                # selected_item.add_item_to_list(new_student)
 
                         print()
                         break

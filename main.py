@@ -21,6 +21,9 @@ class MenuItem:
     def remove_item(self, item):
         self.list.remove(item)
 
+    def get_list_item(self, input):
+        return next(filter(lambda item: item['codigo'] == input, self.list), None)
+
 
 students = []
 disciplines = []
@@ -53,40 +56,48 @@ class Student(MenuItem):
         student_code = input(
             "Informe o código do estudante que deseja exculir: ")
 
-        selected_student = get_list_item(int(student_code), self.list)
+        if student_code.isnumeric():
+            selected_student = self.get_list_item(int(student_code))
 
-        if selected_student != None:
-            self.remove_item(selected_student)
+            if selected_student != None:
+                self.remove_item(selected_student)
 
-            print()
-            print(f"Estudante: {selected_student} removido com sucesso!")
+                print()
+                print(f"Estudante: {selected_student} removido com sucesso!")
 
+            else:
+                print()
+                print("Estudante não encontrado...")
         else:
             print()
-            print("Estudante não encontrado...")
+            print("O código deve ser um número.")
 
     def edit_student(self):
         student_code = input(
             "Informe o código do estudante que deseja editar os dados: ")
 
-        selected_student = get_list_item(int(student_code), self.list)
+        if student_code.isnumeric():
+            selected_student = self.get_list_item(int(student_code))
 
-        if selected_student != None:
-            print(f"Você selecionou o estudante: {selected_student}")
-            print()
+            if selected_student != None:
+                print(f"Você selecionou o estudante: {selected_student}")
+                print()
 
-            selected_student['nome'] = input(
-                "Informe outro nome para o estudante: ")
-            selected_student['cpf'] = input(
-                "Informe outro cpf para o estudante: ")
-            print()
+                selected_student['nome'] = input(
+                    "Informe outro nome para o estudante: ")
+                selected_student['cpf'] = input(
+                    "Informe outro cpf para o estudante: ")
+                print()
 
-            print("Dados do estudante editados com sucesso!")
-            print(selected_student)
+                print("Dados do estudante editados com sucesso!")
+                print(selected_student)
 
+            else:
+                print()
+                print("Estudante não encontrado...")
         else:
             print()
-            print("Estudante não encontrado...")
+            print("O código deve ser um número.")
 
 
 class Discipline(MenuItem):
@@ -181,15 +192,11 @@ def get_selected_menu_item(input, list):
     return next(filter(lambda item: item.id == input, list), None)
 
 
-def get_list_item(input, list):
-    return next(filter(lambda item: item['codigo'] == input, list), None)
-
-
 def display_operations(menu_input):
-    selected_item = menu[int(menu_input) - 1]
     system("cls")
-
     while True:
+        selected_item = menu[int(menu_input) - 1]
+
         if bool(selected_item.active) is False:
             print(f'"{selected_item.name}" está em desenvolvimento!')
             print()

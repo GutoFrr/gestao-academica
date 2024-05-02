@@ -1,4 +1,5 @@
 from os import system
+import json
 
 
 class MenuItem:
@@ -11,8 +12,10 @@ class MenuItem:
 
     def add_item_to_list(self, new_item):
         self.list.append(new_item)
+        self.save_in_json()
 
     def display_operation_list(self):
+        self.get_from_json()
         if len(self.list) == 0:
             print(self.empty_message)
         for item in self.list:
@@ -20,9 +23,24 @@ class MenuItem:
 
     def remove_item(self, item):
         self.list.remove(item)
+        self.save_in_json()
 
-    def get_list_item(self, input):
-        return next(filter(lambda item: item['codigo'] == input, self.list), None)
+    def get_list_item(self, code):
+        if code.isnumeric():
+            return next(filter(lambda item: item['codigo'] == int(code), self.list), None)
+
+        else:
+            print()
+            print("O código deve ser um número.")
+
+    def save_in_json(self):
+        with open('data.json', 'w') as file:
+            json.dump({ self.name: self.list }, file)
+
+    def get_from_json(self):
+        with open('data.json', 'r') as file:
+            self.list = json.load(file)[self.name]
+
 
 
 students = []
@@ -56,48 +74,40 @@ class Student(MenuItem):
         student_code = input(
             "Informe o código do estudante que deseja exculir: ")
 
-        if student_code.isnumeric():
-            selected_student = self.get_list_item(int(student_code))
+        selected_student = self.get_list_item(student_code)
 
-            if selected_student != None:
-                self.remove_item(selected_student)
+        if selected_student != None:
+            self.remove_item(selected_student)
 
-                print()
-                print(f"Estudante: {selected_student} removido com sucesso!")
+            print()
+            print(f"Estudante: {selected_student} removido com sucesso!")
 
-            else:
-                print()
-                print("Estudante não encontrado...")
         else:
             print()
-            print("O código deve ser um número.")
+            print("Estudante não encontrado...")
 
     def edit_student(self):
         student_code = input(
             "Informe o código do estudante que deseja editar os dados: ")
 
-        if student_code.isnumeric():
-            selected_student = self.get_list_item(int(student_code))
+        selected_student = self.get_list_item(student_code)
 
-            if selected_student != None:
-                print(f"Você selecionou o estudante: {selected_student}")
-                print()
+        if selected_student != None:
+            print(f"Você selecionou o estudante: {selected_student}")
+            print()
 
-                selected_student['nome'] = input(
-                    "Informe outro nome para o estudante: ")
-                selected_student['cpf'] = input(
-                    "Informe outro cpf para o estudante: ")
-                print()
+            selected_student['nome'] = input(
+                "Informe outro nome para o estudante: ")
+            selected_student['cpf'] = input(
+                "Informe outro cpf para o estudante: ")
+            print()
 
-                print("Dados do estudante editados com sucesso!")
-                print(selected_student)
+            print("Dados do estudante editados com sucesso!")
+            print(selected_student)
 
-            else:
-                print()
-                print("Estudante não encontrado...")
         else:
             print()
-            print("O código deve ser um número.")
+            print("Estudante não encontrado...")
 
     def trigger_operation(self, operation):
         if operation == "1":
@@ -210,15 +220,15 @@ def press_enter_to_stop():
 def display_operations(menu_input):
     system("cls")
     while True:
-        selected_item = menu[int(menu_input) - 1]
+        selected_menu = get_selected_menu_item(menu_input, menu)
 
-        if bool(selected_item.active) is False:
-            print(f'"{selected_item.name}" está em desenvolvimento!')
+        if bool(selected_menu.active) is False:
+            print(f'"{selected_menu.name}" está em desenvolvimento!')
             print()
             break
 
         display_menu(operations_menu,
-                     f"***** Menu de operações - {selected_item.name} *****")
+                     f"***** Menu de operações - {selected_menu.name} *****")
 
         operation_input = input("Selecione uma operação: ")
 
@@ -237,12 +247,12 @@ def display_operations(menu_input):
                     break
 
                 if selected_operation.id == "2":
-                    selected_item.display_operation_list()
+                    selected_menu.display_operation_list()
 
                     press_enter_to_stop()
                     break
 
-                if selected_item.name == "Estudante":
+                if selected_menu.name == "Estudante":
                     student = Student()
                     while True:
                         print(f"{selected_operation.name}")

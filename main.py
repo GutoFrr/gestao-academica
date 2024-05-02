@@ -99,6 +99,14 @@ class Student(MenuItem):
             print()
             print("O código deve ser um número.")
 
+    def trigger_operation(self, operation):
+        if operation == "1":
+            self.add_student()
+        elif operation == "3":
+            self.remove_student()
+        elif operation == "4":
+            self.edit_student()
+
 
 class Discipline(MenuItem):
     def __init__(self):
@@ -192,6 +200,13 @@ def get_selected_menu_item(input, list):
     return next(filter(lambda item: item.id == input, list), None)
 
 
+def press_enter_to_stop():
+    print()
+    stop = input('Pressione ENTER para continuar...')
+
+    system("cls")
+
+
 def display_operations(menu_input):
     system("cls")
     while True:
@@ -221,38 +236,23 @@ def display_operations(menu_input):
                     print()
                     break
 
-                else:
+                if selected_operation.id == "2":
+                    selected_item.display_operation_list()
+
+                    press_enter_to_stop()
+                    break
+
+                if selected_item.name == "Estudante":
+                    student = Student()
                     while True:
                         print(f"{selected_operation.name}")
                         print()
 
-                        # Incluir
-                        if selected_operation.id == "1":
-                            if selected_item.name == "Estudante":
-                                student = Student()
-                                student.add_student()
+                        student.trigger_operation(selected_operation.id)
 
-                        # Listar
-                        elif selected_operation.id == "2":
-                            selected_item.display_operation_list()
-
-                        # Excluir
-                        elif selected_operation.id == "3":
-                            if selected_item.name == "Estudante":
-                                student = Student()
-                                student.remove_student()
-
-                        # Alterar
-                        elif selected_operation.id == "4":
-                            if selected_item.name == "Estudante":
-                                student = Student()
-                                student.edit_student()
-
-                        print()
                         break
 
-                    stop = input('Pressione ENTER para continuar...')
-                    system("cls")
+                    press_enter_to_stop()
                     break
 
         else:
